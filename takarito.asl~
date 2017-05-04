@@ -1,0 +1,34 @@
+// Agent takarito in project gui2.mas2j
+
+
+
+/* Initial beliefs and rules */
+
+!make_it_clean(a).
+
+/* Initial goals */
+
++!make_it_clean(a):true <- .send(garazs,achieve,sd).
+
+
+/* Plans */
+
+
+
++!start : true <- .print("hello world.").
+
+//TODO
+//Épület takarítása( bejöv? kérés)
+
++!kqml_received(A,B,C,_) : B == tell <- .print("takaritani kell a szobat: " , C).
+
+//Készenléti állapot (töltés alatt)
+//Takarító szerek nyilvántartása /rendelése
+//nap végi takarítás ( id? szimlácio)
+
+//GUI 
+//kijelezzük ha:
+//valamelyik épületbe takarítás kell ( kiküldött robot azonosítója, a takarított helység neve)id?tartam pl 5perc 
+//visszatérés jelzése (takarításból)
+//Minden robot a takarításnál pl 1 egység takarítószert használ fel. Ha kifogyy a raktárból automatikus rendelés leadás(kiírjuk hogy rendelünk )
+//
