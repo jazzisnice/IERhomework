@@ -40,7 +40,7 @@ public class Epulet extends Environment {
 
     public static final Term checkLiquid = Literal.parseLiteral("checkLiquid");
     public static final Term orderLiquid = Literal.parseLiteral("orderLiquid");
-    public static final Term cleanRoom =   Literal.parseLiteral("cleanRoom"); //szol a fononek hogy kuldjon takaritot
+    public static final Term cleanKitchen =   Literal.parseLiteral("cleanKitchen"); //szol a fononek hogy kuldjon takaritot
     public static final Term checkAgent = Literal.parseLiteral("checkAgent"); //ugynokok lekerdezese
     public static final Term sendAgent =   Literal.parseLiteral("sendAgent(agent)"); //clean Room hatasara lekerdezi van e szabad ugynok ha igen kikuldi
     public static final Term createFood = Literal.parseLiteral("createFood");
@@ -59,8 +59,8 @@ public class Epulet extends Environment {
 
         super.init(args);
 
-        Literal isCleanedKitchen = Literal.parseLiteral("cleaned(ebedlo)");
-        Literal isCleanedGarage = Literal.parseLiteral("cleaned(garazs)");
+        Literal isCleanedKitchen = Literal.parseLiteral("cleaned(kitchen)");
+        Literal isCleanedGarage = Literal.parseLiteral("cleaned(garage)");
         Literal isCleanedHall = Literal.parseLiteral("cleaned(hall)");
 
         addPercept("takarito" , isCleanedKitchen);
@@ -87,9 +87,13 @@ public class Epulet extends Environment {
                 System.out.println("liquid check");
                 return model.checkLiquid();
             } 
-            if (action.equals(cleanRoom)) {
+            if (action.equals(orderLiquid)) {
+                System.out.println("liquid order");
+                return model.orderLiquid();
+            }
+            if (action.equals(cleanKitchen)) {
                 System.out.println("clean room");
-                return model.cleanRoom();
+                return model.cleanKitchen();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,29 +117,57 @@ public class Epulet extends Environment {
     }
 
     class Model extends GridWorldModel {
-        public  final int liquidNum = 10;
+        public int liquidNum = 10;
         public  final List<String> busy = new LinkedList<String>();
         public  final List<String> available = Arrays.asList("Zsombor", "Jeni", "Szipu");
+
+        public final List<String> rooms = Arrays.asList("kitchen", "garage", "hall");
+
+
 
         public Model() {
             super(0,0,0);
         }
 
+        //The gui calls this
         public void makeKitchenDirty() {
-            Literal isCleanedKitchen = Literal.parseLiteral("dirtyebedlo");
+            Literal isCleanedKitchen = Literal.parseLiteral("dirtykitchen");
             addPercept("takarito", isCleanedKitchen);
         }
 
         public boolean checkLiquid() {
+            System.out.println("In checkLiquid");
             if (liquidNum > 0) {
                 return true;
             }
             return false;
         }
 
-        public boolean cleanRoom() {
-            System.out.println("In model clean room");
+        public boolean orderLiquid() {
+            liquidNum++;
+            Literal outOfLiquid = Literal.parseLiteral("outOfLiquid");
+            removePercept("takarito", outOfLiquid);
+            //updatePercepts();
+            //innen nem működik, mert a takarito agensnek ugyanugy marad a dirty hiedelme (nem frissul -> nem fut le ujra a takaritas)
+            //ezert ha elfogy a liquid -> nagytakaritas :D :D :D 
             return true;
+        }
+
+
+        //The kitchen is being cleaned, and then the agent believes is it cleaned.
+        public boolean cleanKitchen() {
+            if (checkLiquid()) {
+                liquidNum--;
+                Literal isCleanedKitchen = Literal.parseLiteral("dirtykitchen");
+                removePercept("takarito", isCleanedKitchen );
+                return true;
+            }
+            //orderLiquid, nem történt semmi
+            System.out.println("nincs folyadek, majd rendelni kell");
+            Literal outOfLiquid = Literal.parseLiteral("outOfLiquid");
+            addPercept("takarito", outOfLiquid);
+            //TODO hiedelmek
+            return false;
         }
 
     }
