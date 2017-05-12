@@ -5,23 +5,21 @@
 /* Initial goals */
 //+!make_it_clean(szoba): enough_liquid <- make_it_clean(szoba).
 //+!make_it_clean(a).
-+!clean(garazs).
-+!clean(hall).
-+!clean(ebedlo).
-+!enough_liquid.
 
 /* Plans */
 +!start : true <- .print("hello world.").
 
-+!clean(hall) : resources.getLiquidNum <- .print("hall takaritas").
-+!clean(garazs) : enough_liquid <- .print("garazs takaritas").
-+!clean(ebedlo) : enough_liquid <- .print("ebedlo takaritas").
++!clean(hall)[source(self)] : true <- .print("hall takaritas").
++!clean(garazs)[source(self)] : true <- .print("garazs takaritas").
++!clean(ebedlo)[source(self)] : true <- .print("ebedlo takaritas").
+
+
 
 //TODO
 //Épület takarítása( bejöv? kérés)
 
-+!kqml_received(A,B,C,_) : B == tell <- .print("takaritani kell a szobat: " , C);
-								!clean(C).
++!kqml_received(A,B,C,_) : B == tell & checkLiquid > 0 <- .print("takaritani kell a szobat: " , C);
+								!clean( C ).
 
 //Készenléti állapot (töltés alatt)
 //Takarító szerek nyilvántartása /rendelése

@@ -11,6 +11,7 @@
 MAS gui2 {
    infrastructure: Centralised
 
+    environment: Epulet
 
     agents:
        sample;

@@ -13,7 +13,7 @@
 /* Plans */
 +!start : true <- .print("hello world.").
 
-+!clean(hall) : enough_liquid <- .print("hall takaritas").
++clean(hall) : resources.getLiquidNum <- .print("hall takaritas").
 +!clean(garazs) : enough_liquid <- .print("garazs takaritas").
 +!clean(ebedlo) : enough_liquid <- .print("ebedlo takaritas").
 
@@ -21,7 +21,7 @@
 //Épület takarítása( bejöv? kérés)
 
 +!kqml_received(A,B,C,_) : B == tell <- .print("takaritani kell a szobat: " , C);
-								!clean(C).
+								clean(C).
 
 //Készenléti állapot (töltés alatt)
 //Takarító szerek nyilvántartása /rendelése
