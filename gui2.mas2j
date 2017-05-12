@@ -15,10 +15,6 @@ MAS gui2 {
 
     agents:
        sample;
-        bufes;
-
-        garazs;
-
         takarito;
 
 }

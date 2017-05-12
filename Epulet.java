@@ -14,7 +14,23 @@ import java.util.Random;
 import java.util.logging.Logger;
 import java.util.*;
 
+import jason.asSemantics.DefaultInternalAction;
+import jason.asSemantics.TransitionSystem;
+import jason.asSemantics.Unifier;
+import jason.asSyntax.Literal;
+import jason.asSyntax.StringTerm;
+import jason.asSyntax.Term;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class Epulet extends Environment {
 
@@ -24,7 +40,7 @@ public class Epulet extends Environment {
 
     public static final Term checkLiquid = Literal.parseLiteral("checkLiquid");
     public static final Term orderLiquid = Literal.parseLiteral("orderLiquid");
-    public static final Term cleanRoom =   Literal.parseLiteral("cleanRoom(room)"); //szol a fononek hogy kuldjon takaritot
+    public static final Term cleanRoom =   Literal.parseLiteral("cleanRoom"); //szol a fononek hogy kuldjon takaritot
     public static final Term checkAgent = Literal.parseLiteral("checkAgent"); //ugynokok lekerdezese
     public static final Term sendAgent =   Literal.parseLiteral("sendAgent(agent)"); //clean Room hatasara lekerdezi van e szabad ugynok ha igen kikuldi
     public static final Term createFood = Literal.parseLiteral("createFood");
@@ -33,6 +49,7 @@ public class Epulet extends Environment {
     private Logger logger = Logger.getLogger("gui2.mas2j."+Epulet.class.getName());
 
     public Model model = new Model();
+    public View view = new View();
 
     /** Called before the MAS execution with the args informed in .mas2j */
 
@@ -42,6 +59,18 @@ public class Epulet extends Environment {
 
         super.init(args);
 
+        Literal isCleanedKitchen = Literal.parseLiteral("cleaned(ebedlo)");
+        Literal isCleanedGarage = Literal.parseLiteral("cleaned(garazs)");
+        Literal isCleanedHall = Literal.parseLiteral("cleaned(hall)");
+
+        addPercept("takarito" , isCleanedKitchen);
+        addPercept("takarito" ,isCleanedGarage);
+        addPercept("takarito" ,isCleanedHall);
+        try {
+        view.execute();
+        } catch(Exception e) {
+            e.printStackTrace();
+        } 
     }
 
 
@@ -55,8 +84,13 @@ public class Epulet extends Environment {
 
         try {
             if (action.equals(checkLiquid)) {
+                System.out.println("liquid check");
                 return model.checkLiquid();
             } 
+            if (action.equals(cleanRoom)) {
+                System.out.println("clean room");
+                return model.cleanRoom();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,6 +121,11 @@ public class Epulet extends Environment {
             super(0,0,0);
         }
 
+        public void makeKitchenDirty() {
+            Literal isCleanedKitchen = Literal.parseLiteral("dirtyebedlo");
+            addPercept("takarito", isCleanedKitchen);
+        }
+
         public boolean checkLiquid() {
             if (liquidNum > 0) {
                 return true;
@@ -94,8 +133,126 @@ public class Epulet extends Environment {
             return false;
         }
 
+        public boolean cleanRoom() {
+            System.out.println("In model clean room");
+            return true;
+        }
+
     }
 
+
+    public class View {
+        public Object execute() throws Exception {
+            
+            // get the window title
+            String title = "Agensek";
+
+            //Buttons of top panel
+            final JLabel resources = new JLabel("Eroforrasok:");
+            final JCheckBox electricityCB = new JCheckBox("Aram");
+            final JCheckBox waterCB = new JCheckBox("Viz");
+            final JCheckBox networkCB = new JCheckBox("Halozat");
+
+            //Panels for the main content ( bufe, garazs.. )
+            final JPanel bufePanel = new JPanel();
+
+            //Bufe panel:
+            final JButton cleanUpKitchen = new JButton("Konyha Takaritas");
+
+            //Garazs panel:
+            final JButton cleanUpGarage = new JButton("Garazs Takaritas");
+            //Hall panel:
+            final JButton cleanUpHall = new JButton("Hall Takaritas");
+            
+
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+            JPanel top = new JPanel();
+            JPanel buttons = new JPanel();
+            JPanel mainContent = new JPanel();
+
+            // TABBEDPANEEXMAPLE
+            JTabbedPane jtp = new JTabbedPane(1);
+            JPanel jp1 = new JPanel();
+            jp1.setLayout(new BoxLayout(jp1, BoxLayout.Y_AXIS));
+            JPanel jp2 = new JPanel();
+            JPanel jp3 = new JPanel();
+            JLabel label1 = new JLabel();
+            label1.setText("BUFE AGENS                               ");
+            JLabel label2 = new JLabel();
+            label2.setText("GARAZS AGENS                                ");
+            JLabel label3 = new JLabel();
+            label3.setText("TAKARITO AGENS                               ");
+            
+            jp1.add(label1);
+            jp1.add(cleanUpKitchen);
+
+            jp2.add(label2);
+            jp2.add(cleanUpGarage);
+            jp3.add(label3);
+            jp3.add(cleanUpHall);
+            jtp.addTab("BUFE", jp1);
+            jtp.addTab("GARAZS", jp2);
+            jtp.addTab("HALL", jp3);
+
+
+            //BUTTONS PART
+            JLabel STATUS = new JLabel("-");
+            buttons.add(STATUS);
+
+            //TOP PART
+            top.add(resources);
+            top.add(electricityCB);
+            top.add(waterCB);
+            top.add(networkCB);
+
+
+            //BUFE panel
+           /* bufePanel.add(orderFoods);
+            bufePanel.add(order);
+            bufePanel.add(cleanUpKitchen);*/
+            bufePanel.add(jtp);
+
+            //add panels to main
+            mainContent.add(bufePanel);
+
+            //MAIN PANEL
+            mainPanel.add(top);
+            mainPanel.add(mainContent);
+            mainPanel.add(buttons);
+
+            JFrame frame = new JFrame(title);
+            frame.getContentPane().add(mainPanel);
+
+            frame.pack();
+            frame.setVisible(true);
+            
+            // add the event listeners
+            cleanUpGarage.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {/*
+                    // creates a new event +!run so that the agent can react to the button
+                    runCount++;
+                    ts.getC().addAchvGoal(Literal.parseLiteral("takaritas(garazs)"), null);
+                    STATUS.setText(ts.getC().toString());*/
+                }
+            });
+            cleanUpKitchen.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    model.makeKitchenDirty();
+                    System.out.println("Kitchen event handler pressed.");
+                }
+            });
+            cleanUpHall.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {/*
+                    // creates a new event +!run so that the agent can react to the button
+                    runCount++;
+                    ts.getC().addAchvGoal(Literal.parseLiteral("takaritas(hall)"), null);*/
+                }
+            });
+            return true;
+        }
+    }
 }
 
 
