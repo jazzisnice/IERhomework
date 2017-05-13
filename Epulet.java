@@ -38,9 +38,12 @@ public class Epulet extends Environment {
     public static final boolean water = true;
     public static final boolean electricity = true;
 
-    public static final Term checkLiquid = Literal.parseLiteral("checkLiquid");
-    public static final Term orderLiquid = Literal.parseLiteral("orderLiquid");
+    public static final Term checkLiquid  = Literal.parseLiteral("checkLiquid");
+    public static final Term orderLiquid  = Literal.parseLiteral("orderLiquid");
     public static final Term cleanKitchen =   Literal.parseLiteral("cleanKitchen"); //szol a fononek hogy kuldjon takaritot
+    public static final Term cleanHall    =   Literal.parseLiteral("cleanHall"); //szol a fononek hogy kuldjon takaritot
+    public static final Term cleanGarage  =   Literal.parseLiteral("cleanGarage"); //szol a fononek hogy kuldjon takaritot
+
     public static final Term checkAgent = Literal.parseLiteral("checkAgent"); //ugynokok lekerdezese
     public static final Term sendAgent =   Literal.parseLiteral("sendAgent(agent)"); //clean Room hatasara lekerdezi van e szabad ugynok ha igen kikuldi
     public static final Term createFood = Literal.parseLiteral("createFood");
@@ -59,15 +62,15 @@ public class Epulet extends Environment {
 
         super.init(args);
 
-        Literal isCleanedKitchen = Literal.parseLiteral("cleaned(kitchen)");
-        Literal isCleanedGarage = Literal.parseLiteral("cleaned(garage)");
-        Literal isCleanedHall = Literal.parseLiteral("cleaned(hall)");
+        Literal isCleanedKitchen = Literal.parseLiteral("isCleanedKitchen");
+        Literal isCleanedGarage = Literal.parseLiteral("isCleanedGarage");
+        Literal isCleanedHall = Literal.parseLiteral("isCleanedHall");
 
         addPercept("takarito" , isCleanedKitchen);
         addPercept("takarito" ,isCleanedGarage);
         addPercept("takarito" ,isCleanedHall);
         try {
-        view.execute();
+            view.execute();
         } catch(Exception e) {
             e.printStackTrace();
         } 
@@ -92,8 +95,16 @@ public class Epulet extends Environment {
                 return model.orderLiquid();
             }
             if (action.equals(cleanKitchen)) {
-                System.out.println("clean room");
+                System.out.println("clean kitchen");
                 return model.cleanKitchen();
+            }
+            if (action.equals(cleanHall)) {
+                System.out.println("clean Hall");
+                return model.cleanHall();
+            }
+            if (action.equals(cleanGarage)) {
+                System.out.println("clean Garage");
+                return model.cleanGarage();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,8 +142,8 @@ public class Epulet extends Environment {
 
         //The gui calls this
         public void makeKitchenDirty() {
-            Literal isCleanedKitchen = Literal.parseLiteral("dirtykitchen");
-            addPercept("takarito", isCleanedKitchen);
+            Literal isCleanedKitchen = Literal.parseLiteral("isCleanedKitchen");
+            removePercept("takarito", isCleanedKitchen);
         }
 
         public boolean checkLiquid() {
@@ -158,8 +169,19 @@ public class Epulet extends Environment {
         public boolean cleanKitchen() {
             if (checkLiquid()) {
                 liquidNum--;
-                Literal isCleanedKitchen = Literal.parseLiteral("dirtykitchen");
-                removePercept("takarito", isCleanedKitchen );
+                return true;
+            }
+            //orderLiquid, nem történt semmi
+            System.out.println("nincs folyadek, majd rendelni kell");
+            Literal outOfLiquid = Literal.parseLiteral("outOfLiquid");
+            addPercept("takarito", outOfLiquid);
+            //TODO hiedelmek
+            return false;
+        }
+        
+        public boolean cleanHall() {
+            if (checkLiquid()) {
+                liquidNum--;
                 return true;
             }
             //orderLiquid, nem történt semmi
@@ -170,6 +192,18 @@ public class Epulet extends Environment {
             return false;
         }
 
+        public boolean cleanGarage() {
+            if (checkLiquid()) {
+                liquidNum--;
+                return true;
+            }
+            //orderLiquid, nem történt semmi
+            System.out.println("nincs folyadek, majd rendelni kell");
+            Literal outOfLiquid = Literal.parseLiteral("outOfLiquid");
+            addPercept("takarito", outOfLiquid);
+            //TODO hiedelmek
+            return false;
+        }
     }
 
 
