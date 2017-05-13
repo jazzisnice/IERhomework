@@ -17,4 +17,10 @@ MAS gui2 {
        sample;
         takarito;
 
+        cleanBotAlfa;
+
+        cleanBotBeta;
+
+        cleanBotGamma;
+
 }

@@ -92,8 +92,16 @@ public class Epulet extends Environment {
                 return model.orderLiquid();
             }
             if (action.equals(cleanKitchen)) {
-                System.out.println("clean room");
+                System.out.println("clean kitchen");
                 return model.cleanKitchen();
+            }
+            if (action.equals(cleanGarage)) {
+                System.out.println("clean garage");
+                return model.cleanGarage();
+            }
+            if (action.equals(cleanHall)) {
+                System.out.println("clean hall");
+                return model.cleanHall();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,8 +127,7 @@ public class Epulet extends Environment {
     class Model extends GridWorldModel {
         public int liquidNum = 10;
         public  final List<String> busy = new LinkedList<String>();
-        public  final List<String> available = Arrays.asList("Zsombor", "Jeni", "Szipu");
-
+        public  final List<String> available = Arrays.asList("CleanBotAlfa", "CleanBotBeta", "CleanBotGamma");
         public final List<String> rooms = Arrays.asList("kitchen", "garage", "hall");
 
 
@@ -134,12 +141,21 @@ public class Epulet extends Environment {
             Literal isCleanedKitchen = Literal.parseLiteral("dirtykitchen");
             addPercept("takarito", isCleanedKitchen);
         }
+        public void makeGarageDirty() {
+            Literal isCleanedGarage = Literal.parseLiteral("dirtygarage");
+            addPercept("takarito", isCleanedGarage);
+        }
+        public void makeHallDirty() {
+            Literal isCleanedHall = Literal.parseLiteral("dirtyhall");
+            addPercept("takarito", isCleanedHall);
+        }
 
         public boolean checkLiquid() {
             System.out.println("In checkLiquid");
             if (liquidNum > 0) {
                 return true;
             }
+            //TODO: Order liquid call
             return false;
         }
 
@@ -169,7 +185,36 @@ public class Epulet extends Environment {
             //TODO hiedelmek
             return false;
         }
-
+        //The garage is being cleaned, and then the agent believes is it cleaned.
+        public boolean cleanGarage() {
+            if (checkLiquid()) {
+                liquidNum--;
+                Literal isCleanedGarage = Literal.parseLiteral("dirtygarage");
+                removePercept("takarito", isCleanedGarage );
+                return true;
+            }
+            //orderLiquid, nem történt semmi
+            System.out.println("nincs folyadek, majd rendelni kell");
+            Literal outOfLiquid = Literal.parseLiteral("outOfLiquid");
+            addPercept("takarito", outOfLiquid);
+            //TODO hiedelmek
+            return false;
+        }
+        //The hall is being cleaned, and then the agent believes is it cleaned.
+        public boolean cleanHall() {
+            if (checkLiquid()) {
+                liquidNum--;
+                Literal isCleanedHall = Literal.parseLiteral("dirtyhall");
+                removePercept("takarito", isCleanedHall );
+                return true;
+            }
+            //orderLiquid, nem történt semmi
+            System.out.println("nincs folyadek, majd rendelni kell");
+            Literal outOfLiquid = Literal.parseLiteral("outOfLiquid");
+            addPercept("takarito", outOfLiquid);
+            //TODO hiedelmek
+            return false;
+        }
     }
 
 
@@ -180,10 +225,10 @@ public class Epulet extends Environment {
             String title = "Agensek";
 
             //Buttons of top panel
-            final JLabel resources = new JLabel("Eroforrasok:");
-            final JCheckBox electricityCB = new JCheckBox("Aram");
-            final JCheckBox waterCB = new JCheckBox("Viz");
-            final JCheckBox networkCB = new JCheckBox("Halozat");
+            final JLabel resources = new JLabel("Resources:");
+            final JCheckBox electricityCB = new JCheckBox("Electricity");
+            final JCheckBox waterCB = new JCheckBox("Water");
+            final JCheckBox networkCB = new JCheckBox("Network");
 
             //Panels for the main content ( bufe, garazs.. )
             final JPanel bufePanel = new JPanel();
@@ -211,11 +256,11 @@ public class Epulet extends Environment {
             JPanel jp2 = new JPanel();
             JPanel jp3 = new JPanel();
             JLabel label1 = new JLabel();
-            label1.setText("BUFE AGENS                               ");
+            label1.setText("Kitchen Agent                               ");
             JLabel label2 = new JLabel();
-            label2.setText("GARAZS AGENS                                ");
+            label2.setText("Garage Agent                                ");
             JLabel label3 = new JLabel();
-            label3.setText("TAKARITO AGENS                               ");
+            label3.setText("Cleaner Agent                               ");
             
             jp1.add(label1);
             jp1.add(cleanUpKitchen);
@@ -224,9 +269,9 @@ public class Epulet extends Environment {
             jp2.add(cleanUpGarage);
             jp3.add(label3);
             jp3.add(cleanUpHall);
-            jtp.addTab("BUFE", jp1);
-            jtp.addTab("GARAZS", jp2);
-            jtp.addTab("HALL", jp3);
+            jtp.addTab("Kitchen", jp1);
+            jtp.addTab("Garage", jp2);
+            jtp.addTab("Hall", jp3);
 
 
             //BUTTONS PART
@@ -276,10 +321,9 @@ public class Epulet extends Environment {
                 }
             });
             cleanUpHall.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {/*
-                    // creates a new event +!run so that the agent can react to the button
-                    runCount++;
-                    ts.getC().addAchvGoal(Literal.parseLiteral("takaritas(hall)"), null);*/
+                public void actionPerformed(ActionEvent e) {
+                    model.makeHall();
+                    System.out.println("Hall event handler pressed.");
                 }
             });
             return true;
