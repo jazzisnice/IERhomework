@@ -1,7 +1,5 @@
 // Agent CleanBotAlfa in project gui2.mas2j
 
-+!start : true <- .print("hello world.").
-
 +!clean(ebedlo) : dirty(ebedlo) & checkLiquid > 0 <- println("Kitchen cleanup needed!").
 +!cleanKitchen .
 +!clean(garage) : dirty(garage) & checkLiquid > 0 <- println("Garage cleanup needed!").

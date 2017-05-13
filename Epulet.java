@@ -40,14 +40,16 @@ public class Epulet extends Environment {
 
     public static final Term checkLiquid = Literal.parseLiteral("checkLiquid");
     public static final Term orderLiquid = Literal.parseLiteral("orderLiquid");
-    public static final Term cleanKitchen =   Literal.parseLiteral("cleanKitchen"); //szol a fononek hogy kuldjon takaritot
+    public static final Term cleanKitchen =   Literal.parseLiteral("cleanKitchen");//szol a fononek hogy kuldjon takaritot
+    public static final Term cleanGarage =   Literal.parseLiteral("cleanGarage");//szol a fononek hogy kuldjon takaritot
+    public static final Term cleanHall =   Literal.parseLiteral("cleanHall");//szol a fononek hogy kuldjon takaritot
     public static final Term checkAgent = Literal.parseLiteral("checkAgent"); //ugynokok lekerdezese
     public static final Term sendAgent =   Literal.parseLiteral("sendAgent(agent)"); //clean Room hatasara lekerdezi van e szabad ugynok ha igen kikuldi
     public static final Term createFood = Literal.parseLiteral("createFood");
     // TODO ???? check volt e kosz kaja  keszites kozben
 
     private Logger logger = Logger.getLogger("gui2.mas2j."+Epulet.class.getName());
-
+    public int i=0;
     public Model model = new Model();
     public View view = new View();
 
@@ -63,9 +65,17 @@ public class Epulet extends Environment {
         Literal isCleanedGarage = Literal.parseLiteral("cleaned(garage)");
         Literal isCleanedHall = Literal.parseLiteral("cleaned(hall)");
 
-        addPercept("takarito" , isCleanedKitchen);
-        addPercept("takarito" ,isCleanedGarage);
-        addPercept("takarito" ,isCleanedHall);
+        addPercept("cleanBotAlfa" , isCleanedKitchen);
+        addPercept("cleanBotAlfa" ,isCleanedGarage);
+        addPercept("cleanBotAlfa" ,isCleanedHall);
+
+        addPercept("cleanBotBeta" , isCleanedKitchen);
+        addPercept("cleanBotBeta" ,isCleanedGarage);
+        addPercept("cleanBotBeta" ,isCleanedHall);
+
+        addPercept("cleanBotGamma" , isCleanedKitchen);
+        addPercept("cleanBotGamma" ,isCleanedGarage);
+        addPercept("cleanBotGamma" ,isCleanedHall);
         try {
             view.execute();
         } catch(Exception e) {
@@ -80,9 +90,9 @@ public class Epulet extends Environment {
     public boolean executeAction(String agName, Structure action) {
 
         System.out.println("executing: "+action+", but not implemented!");
-
-
         try {
+
+
             if (action.equals(checkLiquid)) {
                 System.out.println("Az (java) executioActionban hivok liquid check");
                 return model.checkLiquid();
@@ -95,21 +105,21 @@ public class Epulet extends Environment {
                 System.out.println("Az  (java) executioActionban hivok cleanKitchent");
                 return model.cleanKitchen();
             }
-            /*
+
             if (action.equals(cleanGarage)) {
-                System.out.println("clean garage");
+                System.out.println("Az  (java) executioActionban hivok cleangaraget");
                 return model.cleanGarage();
             }
             if (action.equals(cleanHall)) {
-                System.out.println("clean hall");
+                System.out.println("Az  (java) executioActionban hivok cleanhallt");
                 return model.cleanHall();
-            }*/
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        return true; // the action was executed with success 
+        return false; // the action was executed with success
 
     }
 
@@ -127,8 +137,8 @@ public class Epulet extends Environment {
 
     class Model extends GridWorldModel {
         public int liquidNum = 10;
-        public  final List<String> busy = new LinkedList<String>();
-        public  final List<String> available = Arrays.asList("CleanBotAlfa", "CleanBotBeta", "CleanBotGamma");
+        public  final List<String> busy = new LinkedList<String>();// by the way ezt még sehol se használjuk :D
+        public  List<String> available = Arrays.asList("cleanBotAlfa", "cleanBotBeta", "cleanBotGamma");
         public final List<String> rooms = Arrays.asList("kitchen", "garage", "hall");
 
 
@@ -140,15 +150,21 @@ public class Epulet extends Environment {
         //The gui calls this
         public void makeKitchenDirty() {
             Literal isCleanedKitchen = Literal.parseLiteral("dirtykitchen");
-            addPercept("cleanBotAlfa", isCleanedKitchen);
+            String tmp = available.get(i%3);
+            i++;
+            addPercept(tmp, isCleanedKitchen);
         }
         public void makeGarageDirty() {
             Literal isCleanedGarage = Literal.parseLiteral("dirtygarage");
-            addPercept("cleanBotAlfa", isCleanedGarage);
+            String tmp = available.get(i%3);
+            i++;
+            addPercept(tmp, isCleanedGarage);
         }
         public void makeHallDirty() {
             Literal isCleanedHall = Literal.parseLiteral("dirtyhall");
-            addPercept("cleanBotAlfa", isCleanedHall);
+            String tmp = available.get(i%3);
+            i++;
+            addPercept(tmp, isCleanedHall);
         }
 
         public boolean checkLiquid() {
