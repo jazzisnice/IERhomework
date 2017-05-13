@@ -1,5 +1,5 @@
-// Agent cleanBotBeta in project gui2.mas2j
-
+// Agent CleanBotGamma in project gui2.mas2j
+
 +!start : true <- .print("hello world.").
 
 +!clean(ebedlo) : dirty(ebedlo) & checkLiquid > 0 <- println("Kitchen clean").
@@ -13,5 +13,4 @@
 +outOfLiquid[source(percept)] : true <- orderLiquid; cleanKitchen; cleanHall; cleanGarage.
 
 //+dirtyebedlo[source(percept)] : checkLiquid == 0  <- print("liquid > 0"); orderLiquid.
-
 

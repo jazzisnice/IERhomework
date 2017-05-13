@@ -84,15 +84,15 @@ public class Epulet extends Environment {
 
         try {
             if (action.equals(checkLiquid)) {
-                System.out.println("liquid check");
+                System.out.println("Az (java) executioActionban hivok liquid check");
                 return model.checkLiquid();
             }
             if (action.equals(orderLiquid)) {
-                System.out.println("liquid order");
+                System.out.println("Az  (java) executioActionban hivok liquid order");
                 return model.orderLiquid();
             }
             if (action.equals(cleanKitchen)) {
-                System.out.println("clean kitchen");
+                System.out.println("Az  (java) executioActionban hivok cleanKitchent");
                 return model.cleanKitchen();
             }
             /*
@@ -140,15 +140,15 @@ public class Epulet extends Environment {
         //The gui calls this
         public void makeKitchenDirty() {
             Literal isCleanedKitchen = Literal.parseLiteral("dirtykitchen");
-            addPercept("takarito", isCleanedKitchen);
+            addPercept("cleanBotAlfa", isCleanedKitchen);
         }
         public void makeGarageDirty() {
             Literal isCleanedGarage = Literal.parseLiteral("dirtygarage");
-            addPercept("takarito", isCleanedGarage);
+            addPercept("cleanBotAlfa", isCleanedGarage);
         }
         public void makeHallDirty() {
             Literal isCleanedHall = Literal.parseLiteral("dirtyhall");
-            addPercept("takarito", isCleanedHall);
+            addPercept("cleanBotAlfa", isCleanedHall);
         }
 
         public boolean checkLiquid() {

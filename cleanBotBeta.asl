@@ -6,9 +6,9 @@
 +!cleanKitchen .
 
 
-+dirtykitchen[source(percept)] : true  <- cleanKitchen.
-+dirtyhall[source(percept)] : true <- cleanHall.
-+dirtygarage[source(percept)] : true <- cleanGarage.
++dirtykitchen[source(percept)] : true  <- cleanKitchen;.print("I have cleaned the:  " , kitchen).
++dirtyhall[source(percept)] : true <- cleanHall;.print("I have cleaned the:  " , hall).
++dirtygarage[source(percept)] : true <- cleanGarage;.print("I have cleaned the:  " , garage).
 
 +outOfLiquid[source(percept)] : true <- orderLiquid; cleanKitchen; cleanHall; cleanGarage.
 
