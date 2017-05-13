@@ -67,10 +67,10 @@ public class Epulet extends Environment {
         addPercept("takarito" ,isCleanedGarage);
         addPercept("takarito" ,isCleanedHall);
         try {
-        view.execute();
+            view.execute();
         } catch(Exception e) {
             e.printStackTrace();
-        } 
+        }
     }
 
 
@@ -86,7 +86,7 @@ public class Epulet extends Environment {
             if (action.equals(checkLiquid)) {
                 System.out.println("liquid check");
                 return model.checkLiquid();
-            } 
+            }
             if (action.equals(orderLiquid)) {
                 System.out.println("liquid order");
                 return model.orderLiquid();
@@ -95,6 +95,7 @@ public class Epulet extends Environment {
                 System.out.println("clean kitchen");
                 return model.cleanKitchen();
             }
+            /*
             if (action.equals(cleanGarage)) {
                 System.out.println("clean garage");
                 return model.cleanGarage();
@@ -102,11 +103,11 @@ public class Epulet extends Environment {
             if (action.equals(cleanHall)) {
                 System.out.println("clean hall");
                 return model.cleanHall();
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
 
         return true; // the action was executed with success 
 
@@ -220,7 +221,7 @@ public class Epulet extends Environment {
 
     public class View {
         public Object execute() throws Exception {
-            
+
             // get the window title
             String title = "Agensek";
 
@@ -234,13 +235,13 @@ public class Epulet extends Environment {
             final JPanel bufePanel = new JPanel();
 
             //Bufe panel:
-            final JButton cleanUpKitchen = new JButton("Konyha Takaritas");
+            final JButton cleanUpKitchen = new JButton("Clean the Kitchen");
 
             //Garazs panel:
-            final JButton cleanUpGarage = new JButton("Garazs Takaritas");
+            final JButton cleanUpGarage = new JButton("Clean the Garage");
             //Hall panel:
-            final JButton cleanUpHall = new JButton("Hall Takaritas");
-            
+            final JButton cleanUpHall = new JButton("Clean the Hall");
+
 
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -261,7 +262,7 @@ public class Epulet extends Environment {
             label2.setText("Garage Agent                                ");
             JLabel label3 = new JLabel();
             label3.setText("Cleaner Agent                               ");
-            
+
             jp1.add(label1);
             jp1.add(cleanUpKitchen);
 
@@ -304,14 +305,12 @@ public class Epulet extends Environment {
 
             frame.pack();
             frame.setVisible(true);
-            
+
             // add the event listeners
             cleanUpGarage.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {/*
-                    // creates a new event +!run so that the agent can react to the button
-                    runCount++;
-                    ts.getC().addAchvGoal(Literal.parseLiteral("takaritas(garazs)"), null);
-                    STATUS.setText(ts.getC().toString());*/
+                public void actionPerformed(ActionEvent e) {
+                    model.makeGarageDirty();
+                    System.out.println("Garage event handler pressed.");
                 }
             });
             cleanUpKitchen.addActionListener(new ActionListener() {
@@ -322,7 +321,7 @@ public class Epulet extends Environment {
             });
             cleanUpHall.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    model.makeHall();
+                    model.makeHallDirty();
                     System.out.println("Hall event handler pressed.");
                 }
             });
