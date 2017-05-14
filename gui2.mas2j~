@@ -8,7 +8,7 @@
 	
 
 
-MAS gui2 {
+MAS gui {
    infrastructure: Centralised
 
     environment: Epulet

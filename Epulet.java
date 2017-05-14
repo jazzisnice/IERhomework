@@ -34,9 +34,9 @@ import java.util.Calendar;
 
 public class Epulet extends Environment {
 
-    public static final boolean network = true;
-    public static final boolean water = true;
-    public static final boolean electricity = true;
+    public static  boolean network = false;
+    public static  boolean water = false;
+    public static  boolean electricity = false;
 
     public static final Term checkLiquid = Literal.parseLiteral("checkLiquid");
     public static final Term orderLiquid = Literal.parseLiteral("orderLiquid");
@@ -325,22 +325,63 @@ public class Epulet extends Environment {
             // add the event listeners
             cleanUpGarage.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    model.makeGarageDirty();
+                    if (water && network && electricity) 
+                            model.makeGarageDirty();
                     System.out.println("Garage event handler pressed.");
                 }
             });
             cleanUpKitchen.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    model.makeKitchenDirty();
+                    if (water && network && electricity) 
+                            model.makeKitchenDirty();
                     System.out.println("Kitchen event handler pressed.");
                 }
             });
             cleanUpHall.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    model.makeHallDirty();
+                    if (water && network && electricity) 
+                        model.makeHallDirty();
                     System.out.println("Hall event handler pressed.");
                 }
             });
+
+            //final JCheckBox electricityCB = new JCheckBox("Electricity");
+            //final JCheckBox waterCB = new JCheckBox("Water");
+            //final JCheckBox networkCB = new JCheckBox("Network");
+            electricityCB.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (electricityCB.isSelected()) {
+                        electricity = true;
+                    }
+                    else {
+                        electricity = false;
+                    }
+                }
+            });
+
+            waterCB.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (waterCB.isSelected()) {
+                        water = true;
+                    }
+                    else {
+                        water = false;
+                    }
+                }
+            });
+
+            networkCB.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (networkCB.isSelected()) {
+                        network = true;
+                    }
+                    else {
+                        network = false;
+                    }
+                }
+            });
+
+
             return true;
         }
     }
